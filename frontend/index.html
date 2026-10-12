@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MeetingLens – Decision Extractor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">🎙</div>
+      <div><b>MeetingLens</b><small>Decision Extractor</small></div>
+    </div>
+    <nav>
+      <a class="active" href="#">🏠 Dashboard</a>
+      <a href="#">📅 Meetings</a>
+      <a href="#">🕘 History</a>
+      <a href="#">⚙️ Settings</a>
+    </nav>
+    <div class="user">
+      <div class="avatar">AS</div>
+      <div><b>Aarav Sharma</b><small>Project Team</small></div>
+    </div>
+  </aside>
+
+  <!-- Main (scrolls on its own) -->
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1 id="mTitle">Team Sync Meeting</h1>
+        <p class="muted">📅 Apr 27, 2025 &nbsp;|&nbsp; 10:00 AM – 10:45 AM &nbsp;|&nbsp; 3 Participants</p>
+      </div>
+      <div class="top-actions">
+        <span class="live-dot" id="liveLabel">Live Meeting</span>
+        <button class="btn-red" id="endBtn">⏹ End Meeting</button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- LEFT COLUMN -->
+      <section class="col">
+        <div class="listening" id="listenBox">
+          <div class="mic">🎙</div>
+          <div class="wave-wrap">
+            <span id="listenText">Listening...</span>
+            <div class="wave" id="wave"></div>
+          </div>
+          <button class="btn" id="pauseBtn">⏸ Pause</button>
+          <button class="btn icon">⚙️</button>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>💬 Live Transcript</h3><span class="badge-live">● Live</span></div>
+          <div class="scroll" id="transcript"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>✅ Action Items</h3><a href="#" class="link">View All →</a></div>
+          <div class="scroll short">
+            <table>
+              <thead><tr><th>#</th><th>Action</th><th>Responsible Person</th><th>Deadline</th><th>Status</th><th></th></tr></thead>
+              <tbody id="actionBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3>💡 Decisions</h3><a href="#" class="link">View All →</a></div>
+          <table>
+            <thead><tr><th>#</th><th>Decision</th><th>Decided By</th><th>Time</th><th></th></tr></thead>
+            <tbody id="decisionBody"></tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="tabs" id="tabs">
+            <button class="tab active" data-tab="transcript">📄 Transcript</button>
+            <button class="tab" data-tab="actions">✔ Action Items</button>
+            <button class="tab" data-tab="decisions">💡 Decisions</button>
+            <button class="tab" data-tab="timeline">🕒 Timeline</button>
+          </div>
+          <div class="scroll short" id="tabContent"></div>
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN -->
+      <aside class="col">
+        <div class="card pad">
+          <h3>📅 Meeting Info</h3>
+          <p class="lbl">Title</p><p>Team Sync Meeting</p>
+          <p class="lbl">Date &amp; Time</p><p>Apr 27, 2025 | 10:00 AM – 10:45 AM</p>
+          <p class="lbl">Status <span class="pill green" id="statusPill">In Progress</span></p>
+        </div>
+
+        <div class="card pad">
+          <h3>👥 Participants</h3>
+          <ul class="people" id="people"></ul>
+        </div>
+
+        <div class="card pad">
+          <h3>📊 Live Summary</h3>
+          <ul class="stats">
+            <li><span>Action Items</span><b id="sAction">0</b></li>
+            <li><span>Decisions</span><b id="sDecision">0</b></li>
+            <li><span>Speakers Identified</span><b id="sSpeakers">0</b></li>
+            <li><span>Meeting Duration</span><b id="sDuration">0m 00s</b></li>
+          </ul>
+        </div>
+
+        <div class="card pad">
+          <div class="card-head nopad"><h3>📝 Meeting Summary</h3><button class="btn-outline" id="downloadBtn">⬇ Download</button></div>
+          <div id="summary"></div>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
