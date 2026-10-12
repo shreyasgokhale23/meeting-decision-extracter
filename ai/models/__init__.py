@@ -2,9 +2,11 @@
 
 from .schemas import (
     ActionItem,
+    AudioMeetingResult,
     DecisionItem,
     MeetingOutput,
     SentenceType,
+    SpeakerTranscriptTurn,
     TaskStatus,
     TranscriptSegmentInput,
     TranscriptSegmentOutput,
@@ -12,10 +14,13 @@ from .schemas import (
 
 __all__ = [
     "ActionItem",
+    "AudioMeetingResult",
     "DecisionItem",
     "MeetingOutput",
     "SentenceType",
+    "SpeakerTranscriptTurn",
     "TaskStatus",
     "TranscriptSegmentInput",
     "TranscriptSegmentOutput",
 ]
+

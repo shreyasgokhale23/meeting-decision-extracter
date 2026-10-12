@@ -128,3 +128,33 @@ def from_diart_whisper(
         timestamp=formatted_ts,
         text=whisper_text.strip(),
     )
+
+
+def from_speaker_transcript_turn(
+    turn: Any,
+    meeting_id: Optional[str] = None,
+) -> TranscriptSegmentInput:
+    """Convert an aligned SpeakerTranscriptTurn into TranscriptSegmentInput for NLP processing."""
+    speaker = getattr(turn, "speaker", None) or (
+        turn.get("speaker") if isinstance(turn, dict) else None
+    )
+    start_sec = getattr(turn, "start", 0.0) if hasattr(turn, "start") else (
+        turn.get("start", 0.0) if isinstance(turn, dict) else 0.0
+    )
+    text = getattr(turn, "text", "") if hasattr(turn, "text") else (
+        turn.get("text", "") if isinstance(turn, dict) else ""
+    )
+
+    hours = int(start_sec // 3600)
+    minutes = int((start_sec % 3600) // 60)
+    seconds = int(start_sec % 60)
+    formatted_ts = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+    return TranscriptSegmentInput(
+        meeting_id=meeting_id,
+        speaker_id=str(speaker) if speaker else None,
+        speaker=str(speaker) if speaker else None,
+        timestamp=formatted_ts,
+        text=str(text).strip(),
+    )
+

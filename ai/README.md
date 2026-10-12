@@ -275,90 +275,167 @@ python tests/test_dataset.py
 
 ---
 
-## 10. Future Integration with Whisper (Speech-to-Text)
+## 10. Speech-to-Text with OpenAI Whisper
 
-The `transcription/interface.py` file defines the `TranscriptionProvider` interface. When ready to add Whisper, implement the provider without changing any NLP code:
+Whisper provides accurate speech-to-text transcription with timestamped intervals:
+- **Responsibility**: *WHAT* was said and *WHEN* (start/end in seconds).
+- **Implementation**: [`ai/transcription/whisper_provider.py`](file:///e:/meeting-decision-extracter/ai/transcription/whisper_provider.py) implements `TranscriptionProvider`.
+- **Default Model**: `'base'` (configurable to `'tiny'`, `'small'`, `'medium'`, `'large'`).
 
+### Usage
 ```python
-# transcription/whisper_provider.py
-from transcription.interface import TranscriptionProvider, TranscriptTurn
-from nlp.adapters import from_whisper_turn
-from nlp import process_segment
-import whisper
+from transcription.whisper_provider import WhisperProvider
 
-class WhisperProvider(TranscriptionProvider):
-    def __init__(self, model_name: str = "base"):
-        self.model = whisper.load_model(model_name)
-
-    def transcribe(self, audio_path: str):
-        result = self.model.transcribe(audio_path)
-        turns = []
-        for seg in result["segments"]:
-            turns.append(TranscriptTurn(text=seg["text"], start=seg["start"], end=seg["end"]))
-        return turns
-
-# Usage in pipeline:
-# turn = whisper_provider.transcribe(audio_file)[0]
-# segment_input = from_whisper_turn(turn.model_dump(), speaker="Rahul")
-# result = process_segment(segment_input)
+provider = WhisperProvider("base")
+turns = provider.transcribe("data/dummy_meeting.wav")
+for turn in turns:
+    print(f"[{turn.start:.2f}s - {turn.end:.2f}s]: {turn.text}")
 ```
 
 ---
 
-## 11. Future Integration with Diart (Speaker Diarization)
+## 11. Speaker Diarization with Diart (3-Speaker Configuration)
 
-The `diarization/interface.py` file defines the `DiarizationProvider` interface. For live streaming diarization:
+Diart provides real-time online speaker diarization built on Pyannote Audio:
+- **Responsibility**: *WHO* was speaking and *WHEN* (start/end in seconds).
+- **Implementation**: [`ai/diarization/diart_provider.py`](file:///e:/meeting-decision-extracter/ai/diarization/diart_provider.py) implements `DiarizationProvider`.
+- **3-Speaker Resolution**: Diart's default clustering threshold (`delta_new=1.0`) is too permissive for clean or synthetic voices, merging the third voice into an existing cluster. Configuring `SpeakerDiarizationConfig(delta_new=0.8)` separates all 3 distinct speakers (`speaker0`, `speaker1`, `speaker2`) reliably without artificial segmentation.
 
 ```python
-# diarization/diart_provider.py
-from diarization.interface import DiarizationProvider, SpeakerSegment
-from nlp.adapters import from_diart_whisper
-from nlp import process_segment
+from diart.blocks import SpeakerDiarizationConfig
+import diart
 
-class DiartProvider(DiarizationProvider):
-    def diarize(self, audio_path: str):
-        # Initialize streaming pipeline from diart
-        # yield or return list of SpeakerSegment(speaker=spk, start=t0, end=t1)
-        pass
+config = SpeakerDiarizationConfig(delta_new=0.8)
+pipeline = diart.SpeakerDiarization(config=config)
+```
 
-# Usage with Whisper:
-# input_segment = from_diart_whisper(diar_turn.model_dump(), whisper_text="Let's use Redis.")
-# result = process_segment(input_segment)
+### Hugging Face Setup (Required for Diart Model Weights)
+1. Accept model terms on Hugging Face:
+   - [pyannote/segmentation](https://huggingface.co/pyannote/segmentation)
+   - [pyannote/embedding](https://huggingface.co/pyannote/embedding)
+2. Generate an Access Token at [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens).
+3. Set your token environment variable:
+   ```bash
+   # Windows PowerShell
+   $env:HF_TOKEN = "hf_your_token_here"
+   # Linux / macOS
+   export HF_TOKEN="hf_your_token_here"
+   ```
+
+### PyTorch Compatibility & Safe Globals
+PyTorch 2.6+ defaults `torch.load` to `weights_only=True`. The `DiartProvider` automatically allowlists `omegaconf.listconfig.ListConfig` and `torch.serialization.add_safe_globals` at startup to ensure seamless checkpoint loading without disabling PyTorch security.
+
+---
+
+## 12. Speaker-Aware Transcript Alignment
+
+Connects *WHO* spoke (Diart) with *WHAT* was transcribed (Whisper):
+- **Implementation**: [`ai/transcription/speaker_aware.py`](file:///e:/meeting-decision-extracter/ai/transcription/speaker_aware.py)
+- **Algorithm**: Maximum Temporal Overlap
+  1. For each Whisper turn `[t_start, t_end]`, compute overlap against all Diart segments.
+  2. Accumulate overlap durations per speaker cluster.
+  3. Assign the speaker with the maximum accumulated overlap.
+  4. If a Whisper turn occurs in silence with zero overlap, assigns `'UNKNOWN'`.
+  5. Preserves Whisper transcribed text and timestamps verbatim.
+
+```python
+from transcription.speaker_aware import align_transcript_with_speakers
+
+aligned_turns = align_transcript_with_speakers(
+    whisper_turns=whisper_turns,
+    diarization_segments=diar_segments,
+)
 ```
 
 ---
 
-## 12. Integration with FastAPI Backend
+## 13. End-to-End Audio Processing Orchestrator
 
-Integrating into a FastAPI endpoint is instantaneous because `process_segment` and `process_transcript` accept standard dictionaries and Pydantic models:
+The top-level orchestrator connects the entire multi-modal pipeline:
+```
+Audio File (WAV)
+       │
+  ┌────┴────┐
+  │         │
+Diart    Whisper
+  │         │
+  └────┬────┘
+       ▼
+Speaker Alignment
+       ▼
+Speaker-Aware Transcript
+       ▼
+Existing NLP Pipeline
+       ▼
+Structured AudioMeetingResult
+```
+
+- **Implementation**: [`ai/transcription/audio_processor.py`](file:///e:/meeting-decision-extracter/ai/transcription/audio_processor.py)
+- **Convenience API**: `process_audio(audio_path, meeting_id=None, reference_datetime=None)`
+- **Output**: Returns schema-validated `AudioMeetingResult` with:
+  - `speaker_transcript`: List of `SpeakerTranscriptTurn` (speaker, start, end, text)
+  - `action_items`: Extracted actions with assignees, deadlines, and statuses
+  - `decisions`: Extracted meeting decisions with speakers
+  - `participants`: Set of detected meeting participants
+
+### Programmatic Usage
+```python
+from transcription.audio_processor import process_audio
+
+result = process_audio("data/dummy_meeting.wav", meeting_id="meeting_001")
+print(result.model_dump_json(indent=2))
+```
+
+---
+
+## 14. Testing & Verification
+
+### Fast Offline Unit Tests (Mocked Inference, No Model Downloads)
+```bash
+python -m pytest tests/ -v
+```
+Runs the full suite of **65 unit tests** covering sentence classification, action/person/deadline/decision/status extractors, adapters, benchmark evaluation, Diart provider mocks, speaker-aware alignment, and audio processor orchestration.
+
+### Manual Real-Audio Verification Tests
+1. **Whisper Transcription**:
+   ```bash
+   python test_manual_whisper.py
+   ```
+2. **Diart 3-Speaker Diarization**:
+   ```bash
+   python test_manual_diarization.py
+   ```
+3. **End-to-End Audio Pipeline**:
+   ```bash
+   python test_manual_audio_pipeline.py
+   ```
+
+---
+
+## 15. Integration with FastAPI Backend
+
+Integrating into a future FastAPI backend is straightforward because `process_audio`, `process_segment`, and `process_transcript` return standard Pydantic models:
 
 ```python
-# server.py (FastAPI Backend)
-from fastapi import FastAPI, WebSocket
-from models.schemas import TranscriptSegmentInput, TranscriptSegmentOutput, MeetingOutput
-from nlp import process_segment, process_transcript
+from fastapi import FastAPI, UploadFile, File
+from transcription.audio_processor import process_audio
+from models.schemas import AudioMeetingResult
 
 app = FastAPI(title="Meeting Decision Extractor API")
 
-@app.post("/api/v1/process-segment", response_model=TranscriptSegmentOutput)
-async def api_process_segment(segment: TranscriptSegmentInput):
-    """Processes a single real-time transcript segment."""
-    return process_segment(segment)
-
-@app.post("/api/v1/process-transcript", response_model=MeetingOutput)
-async def api_process_transcript(payload: dict):
-    """Batch processes a full meeting transcript."""
-    segments = payload.get("segments", [])
-    meeting_id = payload.get("meeting_id")
-    return process_transcript(segments, meeting_id=meeting_id)
-
-@app.websocket("/ws/meetings/{meeting_id}")
-async def meeting_ws(websocket: WebSocket, meeting_id: str):
-    await websocket.accept()
-    while True:
-        data = await websocket.receive_json()
-        data["meeting_id"] = meeting_id
-        result = process_segment(data)
-        # Broadcast structured extraction to connected clients / frontend dashboard
-        await websocket.send_json(result.model_dump())
+@app.post("/api/v1/process-audio", response_model=AudioMeetingResult)
+async def api_process_audio(file: UploadFile = File(...)):
+    temp_path = f"/tmp/{file.filename}"
+    with open(temp_path, "wb") as f:
+        f.write(await file.read())
+    return process_audio(temp_path)
 ```
+
+---
+
+## 16. Known Limitations
+
+1. **CPU Inference Latency**: Running Whisper and Diart simultaneously on CPU takes ~40-60 seconds for a ~2-minute audio file. GPU acceleration (CUDA) is recommended for production deployments.
+2. **Speaker Turn Granularity**: When two speakers talk simultaneously or rapid turn-taking occurs within a single Whisper sentence turn, the sentence is assigned to the dominant speaker based on maximum temporal overlap.
+3. **Online Clustering Cluster IDs**: Diart assigns speaker labels (`speaker0`, `speaker1`, ...) based on chronological appearance in the stream. Mapping cluster labels to human names (e.g. "Rahul", "Sneha") occurs downstream via NLP assignee resolution or participant matching.
+

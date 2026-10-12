@@ -6,6 +6,7 @@ from .adapters import (
     from_text_line,
     from_whisper_turn,
     from_diart_whisper,
+    from_speaker_transcript_turn,
     from_dict,
 )
 from .classifier import RuleBasedClassifier, classify_sentence
@@ -23,6 +24,7 @@ __all__ = [
     "from_text_line",
     "from_whisper_turn",
     "from_diart_whisper",
+    "from_speaker_transcript_turn",
     "from_dict",
     "RuleBasedClassifier",
     "classify_sentence",
@@ -35,3 +37,4 @@ __all__ = [
     "split_into_sentences",
     "remove_meeting_item_reference",
 ]
+

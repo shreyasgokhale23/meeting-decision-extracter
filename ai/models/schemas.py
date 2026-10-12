@@ -84,3 +84,29 @@ class MeetingOutput(BaseModel):
     participants: List[str] = Field(default_factory=list)
 
     model_config = ConfigDict(use_enum_values=True)
+
+
+class SpeakerTranscriptTurn(BaseModel):
+    """Speaker-assigned transcription turn linking speech-to-text with diarization.
+    
+    Pairs Whisper transcribed text and timestamps with Diart speaker cluster labels.
+    """
+    speaker: str = Field(..., description="Assigned speaker label, e.g. 'speaker0' or 'UNKNOWN'")
+    start: float = Field(..., description="Start timestamp in seconds")
+    end: float = Field(..., description="End timestamp in seconds")
+    text: str = Field(..., description="Transcribed utterance text from Whisper")
+
+    model_config = ConfigDict(extra="ignore", populate_by_name=True)
+
+
+class AudioMeetingResult(BaseModel):
+    """Complete structured result from end-to-end audio processing."""
+    meeting_id: Optional[str] = None
+    speaker_transcript: List[SpeakerTranscriptTurn] = Field(default_factory=list)
+    meeting_summary: MeetingOutput
+    action_items: List[ActionItem] = Field(default_factory=list)
+    decisions: List[DecisionItem] = Field(default_factory=list)
+    participants: List[str] = Field(default_factory=list)
+
+    model_config = ConfigDict(use_enum_values=True)
+
