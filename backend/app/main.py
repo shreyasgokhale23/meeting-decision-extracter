@@ -1,0 +1,216 @@
+import hashlib
+import os
+from contextlib import asynccontextmanager
+from datetime import UTC, date, datetime
+from typing import Any
+
+from bson import ObjectId
+from fastapi import FastAPI, HTTPException, Query, WebSocket, WebSocketDisconnect
+from fastapi.encoders import jsonable_encoder
+from fastapi.middleware.cors import CORSMiddleware
+from pymongo import ASCENDING, DESCENDING, AsyncMongoClient, ReturnDocument
+from pymongo.errors import DuplicateKeyError
+
+from app.models import AIResult, MeetingCreate
+from app.realtime import sockets
+
+
+MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
+MONGODB_DATABASE = os.getenv("MONGODB_DATABASE", "meeting_backend")
+CORS_ORIGINS = [origin.strip() for origin in os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",") if origin.strip()]
+
+
+def public_document(document: dict[str, Any]) -> dict[str, Any]:
+    result = dict(document)
+    result["id"] = str(result.pop("_id"))
+    return jsonable_encoder(result)
+
+
+def segment_key(result: AIResult) -> str:
+    # Stable key makes retries safe without requiring a field outside the agreed contract.
+    raw = "\x1f".join((result.meeting_id, result.speaker_id, result.timestamp.isoformat(), result.text))
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    client = AsyncMongoClient(MONGODB_URI, tz_aware=True, serverSelectionTimeoutMS=5000)
+    app.state.mongo = client
+    app.state.db = client[MONGODB_DATABASE]
+    await client.admin.command("ping")
+    await app.state.db.meetings.create_index([("meeting_id", ASCENDING)], unique=True)
+    await app.state.db.transcripts.create_index([("meeting_id", ASCENDING), ("timestamp", DESCENDING)])
+    await app.state.db.transcripts.create_index([("segment_key", ASCENDING)], unique=True)
+    await app.state.db.action_items.create_index([("meeting_id", ASCENDING), ("segment_key", ASCENDING)], unique=True)
+    await app.state.db.action_items.create_index([("meeting_id", ASCENDING), ("status", ASCENDING)])
+    await app.state.db.decisions.create_index([("meeting_id", ASCENDING), ("segment_key", ASCENDING)], unique=True)
+    try:
+        yield
+    finally:
+        await client.close()
+
+
+app = FastAPI(title="Meeting Backend API", version="1.0.0", lifespan=lifespan)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PATCH", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
+)
+
+
+@app.get("/health")
+async def health() -> dict[str, str]:
+    await app.state.db.command("ping")
+    return {"status": "ok", "database": "connected"}
+
+
+@app.post("/api/meetings", status_code=201)
+async def create_meeting(payload: MeetingCreate):
+    now = datetime.now(UTC)
+    meeting = {
+        "meeting_id": payload.meeting_id,
+        "title": payload.title,
+        "started_at": payload.started_at or now,
+        "created_at": now,
+    }
+    try:
+        await app.state.db.meetings.insert_one(meeting)
+    except DuplicateKeyError:
+        raise HTTPException(status_code=409, detail="meeting_id already exists") from None
+    return public_document(meeting)
+
+
+@app.get("/api/meetings")
+async def list_meetings(limit: int = Query(50, ge=1, le=200), offset: int = Query(0, ge=0)):
+    cursor = app.state.db.meetings.find().sort("created_at", DESCENDING).skip(offset).limit(limit)
+    return [public_document(item) async for item in cursor]
+
+
+@app.get("/api/meetings/{meeting_id}")
+async def get_meeting(meeting_id: str):
+    meeting = await app.state.db.meetings.find_one({"meeting_id": meeting_id})
+    if not meeting:
+        raise HTTPException(status_code=404, detail="meeting not found")
+    return public_document(meeting)
+
+
+@app.post("/api/meetings/{meeting_id}/segments", status_code=202)
+async def process_segment(meeting_id: str, payload: AIResult):
+    if payload.meeting_id != meeting_id:
+        raise HTTPException(status_code=422, detail="path meeting_id must match payload meeting_id")
+    db = app.state.db
+    if not await db.meetings.find_one({"meeting_id": meeting_id}, {"_id": 1}):
+        raise HTTPException(status_code=404, detail="meeting not found; create it first")
+
+    key = segment_key(payload)
+    now = datetime.now(UTC)
+    transcript = payload.model_dump(mode="python")
+    transcript.update({"segment_key": key, "received_at": now})
+    # Persist the original validated AI result for every classification, including retries.
+    await db.transcripts.update_one({"segment_key": key}, {"$setOnInsert": transcript}, upsert=True)
+
+    result = payload.model_dump(mode="json")
+    if payload.type == "ACTION":
+        action_doc = {
+            "meeting_id": meeting_id,
+            "segment_key": key,
+            "speaker": payload.speaker,
+            "speaker_id": payload.speaker_id,
+            "responsible_person": payload.responsible_person,
+            "action": payload.action,
+            "deadline_text": payload.deadline_text,
+            "deadline_normalized": payload.deadline_normalized,
+            "status": payload.status or "Pending",
+            "timestamp": payload.timestamp,
+            "updated_at": now,
+        }
+        await db.action_items.find_one_and_update(
+            {"meeting_id": meeting_id, "segment_key": key},
+            {"$set": action_doc, "$setOnInsert": {"created_at": now}},
+            upsert=True,
+            return_document=ReturnDocument.AFTER,
+        )
+    elif payload.type == "DECISION":
+        decision_doc = {
+            "meeting_id": meeting_id,
+            "segment_key": key,
+            "speaker": payload.speaker,
+            "speaker_id": payload.speaker_id,
+            "decision": payload.decision,
+            "timestamp": payload.timestamp,
+            "updated_at": now,
+        }
+        await db.decisions.update_one(
+            {"meeting_id": meeting_id, "segment_key": key},
+            {"$set": decision_doc, "$setOnInsert": {"created_at": now}},
+            upsert=True,
+        )
+
+    await sockets.publish(meeting_id, {"event": "transcript_processed", "data": result})
+    return {"accepted": True, "segment_key": key, "data": result}
+
+
+async def paged_collection(collection, meeting_id: str, limit: int, offset: int):
+    cursor = collection.find({"meeting_id": meeting_id}, {"segment_key": 0}).sort("timestamp", DESCENDING).skip(offset).limit(limit)
+    return [public_document(item) async for item in cursor]
+
+
+@app.get("/api/meetings/{meeting_id}/transcripts")
+async def get_transcripts(meeting_id: str, limit: int = Query(100, ge=1, le=500), offset: int = Query(0, ge=0)):
+    return await paged_collection(app.state.db.transcripts, meeting_id, limit, offset)
+
+
+@app.get("/api/meetings/{meeting_id}/actions")
+async def get_actions(meeting_id: str, status: str | None = None, limit: int = Query(100, ge=1, le=500), offset: int = Query(0, ge=0)):
+    query = {"meeting_id": meeting_id}
+    if status:
+        query["status"] = status
+    cursor = app.state.db.action_items.find(query, {"segment_key": 0}).sort("timestamp", DESCENDING).skip(offset).limit(limit)
+    return [public_document(item) async for item in cursor]
+
+
+@app.patch("/api/meetings/{meeting_id}/actions/{action_id}")
+async def update_action(meeting_id: str, action_id: str, changes: dict[str, Any]):
+    allowed = {"status", "responsible_person", "deadline_text", "deadline_normalized", "action"}
+    if not changes or set(changes) - allowed:
+        raise HTTPException(status_code=422, detail=f"allowed fields: {', '.join(sorted(allowed))}")
+    if "status" in changes and (not isinstance(changes["status"], str) or not changes["status"].strip()):
+        raise HTTPException(status_code=422, detail="status must be a non-empty string")
+    if "deadline_normalized" in changes and changes["deadline_normalized"] is not None:
+        try:
+            changes["deadline_normalized"] = date.fromisoformat(changes["deadline_normalized"])
+        except (TypeError, ValueError):
+            raise HTTPException(status_code=422, detail="deadline_normalized must be YYYY-MM-DD") from None
+    changes["updated_at"] = datetime.now(UTC)
+    try:
+        object_id = ObjectId(action_id)
+    except Exception:
+        raise HTTPException(status_code=404, detail="action item not found") from None
+    updated = await app.state.db.action_items.find_one_and_update(
+        {"_id": object_id, "meeting_id": meeting_id}, {"$set": changes}, return_document=ReturnDocument.AFTER
+    )
+    if not updated:
+        raise HTTPException(status_code=404, detail="action item not found")
+    return public_document(updated)
+
+
+@app.get("/api/meetings/{meeting_id}/decisions")
+async def get_decisions(meeting_id: str, limit: int = Query(100, ge=1, le=500), offset: int = Query(0, ge=0)):
+    return await paged_collection(app.state.db.decisions, meeting_id, limit, offset)
+
+
+@app.websocket("/ws/meetings/{meeting_id}")
+async def meeting_stream(socket: WebSocket, meeting_id: str):
+    if not await app.state.db.meetings.find_one({"meeting_id": meeting_id}, {"_id": 1}):
+        await socket.close(code=4404, reason="meeting not found")
+        return
+    await sockets.connect(meeting_id, socket)
+    try:
+        while True:
+            # Client messages are ignored; receiving keeps the connection lifecycle observable.
+            await socket.receive_text()
+    except WebSocketDisconnect:
+        await sockets.disconnect(meeting_id, socket)
+
