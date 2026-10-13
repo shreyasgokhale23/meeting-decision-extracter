@@ -388,13 +388,76 @@ print(result.model_dump_json(indent=2))
 
 ---
 
-## 14. Testing & Verification
+## 14. Microphone Recording
+
+The microphone recording module ([`ai/audio/microphone.py`](file:///e:/meeting-decision-extracter/ai/audio/microphone.py)) provides local microphone capture for meetings of arbitrary duration, saving a clean PCM WAV file that seamlessly connects to the existing AI processing pipeline.
+
+### Post-Meeting Processing Architecture
+```
+Microphone
+    ↓
+Complete Meeting Audio Capture (Arbitrary Duration)
+    ↓
+16 kHz Mono 16-bit PCM WAV File (data/recordings/)
+    ↓
+existing process_audio()
+    ↓
+Diart (Speaker Diarization)  +  Whisper (STT Transcription)
+    ↓
+Speaker-Aware Temporal Alignment
+    ↓
+NLP Intelligence Extraction Pipeline
+    ↓
+Actions / Responsible Persons / Deadlines / Decisions / Status
+```
+
+### Key Architectural Principles
+- **Complete Meeting Recording First**: The system records the complete meeting before initiating AI processing.
+- **Post-Meeting Processing (NOT Streaming)**: There is **no incremental AI chunk processing** while the microphone is actively recording, preventing CPU saturation during live meetings.
+- **PCM WAV Compatibility**: Records in 16,000 Hz, mono (1 channel), 16-bit signed PCM WAV format—the exact native audio format required by Diart online clustering and Whisper STT.
+- **Robust Hardware & Lifecycle Management**: Thread-safe stream management, automatic directory provisioning (`data/recordings/`), unique collision-free filenames (`meeting_<meeting_id>_<timestamp>.wav`), and guaranteed resource cleanup even if exceptions occur.
+
+### Programmatic Usage
+```python
+from audio.microphone import MicrophoneRecorder, record_and_process_meeting
+
+# Option 1: High-level end-to-end recording and processing
+result = record_and_process_meeting(
+    meeting_id="meeting_101",
+    stop_trigger=None,  # Prompts user to press [ENTER] in console to stop
+)
+print(f"Participants: {result.participants}")
+print(f"Actions extracted: {len(result.action_items)}")
+print(f"Decisions extracted: {len(result.decisions)}")
+
+# Option 2: Granular recorder control
+with MicrophoneRecorder(sample_rate=16000, channels=1) as recorder:
+    recorder.start(meeting_id="meeting_101")
+    # ... speak for arbitrary duration ...
+    saved_wav_path = recorder.stop()
+
+# Pass resulting WAV path to the existing AI pipeline
+from transcription.audio_processor import process_audio
+result = process_audio(saved_wav_path, meeting_id="meeting_101")
+```
+
+### Manual Verification Script
+Test recording with your physical microphone and running the result through the AI pipeline:
+```bash
+python test_manual_microphone.py
+```
+> [!NOTE]
+> The manual microphone test requires a physical microphone and locally installed audio drivers (`sounddevice`). It prompts you to speak, press `[ENTER]` when done, displays WAV audio metrics, and automatically feeds the recording to Diart, Whisper, and NLP extraction.
+
+---
+
+## 15. Testing & Verification
 
 ### Fast Offline Unit Tests (Mocked Inference, No Model Downloads)
 ```bash
 python -m pytest tests/ -v
 ```
-Runs the full suite of **65 unit tests** covering sentence classification, action/person/deadline/decision/status extractors, adapters, benchmark evaluation, Diart provider mocks, speaker-aware alignment, and audio processor orchestration.
+Runs the full suite of **81 unit tests** covering sentence classification, action/person/deadline/decision/status extractors, adapters, benchmark evaluation, Diart provider mocks, speaker-aware alignment, audio processor orchestration, and offline microphone recording mocks.
 
 ### Manual Real-Audio Verification Tests
 1. **Whisper Transcription**:
@@ -409,10 +472,14 @@ Runs the full suite of **65 unit tests** covering sentence classification, actio
    ```bash
    python test_manual_audio_pipeline.py
    ```
+4. **Physical Microphone Recording & End-to-End Processing**:
+   ```bash
+   python test_manual_microphone.py
+   ```
 
 ---
 
-## 15. Integration with FastAPI Backend
+## 16. Integration with FastAPI Backend
 
 Integrating into a future FastAPI backend is straightforward because `process_audio`, `process_segment`, and `process_transcript` return standard Pydantic models:
 
@@ -433,7 +500,7 @@ async def api_process_audio(file: UploadFile = File(...)):
 
 ---
 
-## 16. Known Limitations
+## 17. Known Limitations
 
 1. **CPU Inference Latency**: Running Whisper and Diart simultaneously on CPU takes ~40-60 seconds for a ~2-minute audio file. GPU acceleration (CUDA) is recommended for production deployments.
 2. **Speaker Turn Granularity**: When two speakers talk simultaneously or rapid turn-taking occurs within a single Whisper sentence turn, the sentence is assigned to the dominant speaker based on maximum temporal overlap.
