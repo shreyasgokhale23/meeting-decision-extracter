@@ -1,10 +1,11 @@
 from datetime import UTC, date, datetime
-from typing import Literal
+from typing import Any, List, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
-SegmentType = Literal["ACTION", "DECISION", "DISCUSSION", "INFORMATION"]
+SegmentType = Literal["ACTION", "DECISION", "DISCUSSION", "INFORMATION", "UNKNOWN"]
+MeetingStatus = Literal["created", "processing", "completed", "failed"]
 
 
 class AIResult(BaseModel):
@@ -60,8 +61,27 @@ class MeetingCreate(BaseModel):
 
 
 class MeetingOut(BaseModel):
+    id: Optional[str] = None
     meeting_id: str
     title: str
+    status: MeetingStatus = "created"
     started_at: datetime
     created_at: datetime
+    ended_at: Optional[datetime] = None
+    audio_path: Optional[str] = None
+    participants: List[str] = Field(default_factory=list)
+    error: Optional[str] = None
 
+
+class MeetingAudioUploadResponse(BaseModel):
+    meeting_id: str
+    status: MeetingStatus = "processing"
+    message: Optional[str] = None
+
+
+class MeetingResultOut(BaseModel):
+    meeting: dict[str, Any]
+    participants: List[str] = Field(default_factory=list)
+    transcript: List[dict[str, Any]] = Field(default_factory=list)
+    action_items: List[dict[str, Any]] = Field(default_factory=list)
+    decisions: List[dict[str, Any]] = Field(default_factory=list)

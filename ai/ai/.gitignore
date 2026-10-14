@@ -1,0 +1,8 @@
+# Ignore recorded audio sessions
+data/recordings/*.wav
+!data/recordings/.gitkeep
+
+# Python caches and testing artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/

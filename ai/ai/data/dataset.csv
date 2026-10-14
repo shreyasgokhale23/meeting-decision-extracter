@@ -1,0 +1,151 @@
+meeting_id,speaker_id,speaker,timestamp,text,type,action,responsible_person,deadline_text,deadline_normalized,decision,status
+meeting_001,SPEAKER_00,Rahul,10:02:15,I'll complete the backend by Friday.,ACTION,Complete the backend,Rahul,by Friday,2026-10-09,,Pending
+meeting_001,SPEAKER_01,Sneha,10:03:00,I will prepare the UI tomorrow.,ACTION,Prepare the UI,Sneha,tomorrow,2026-10-06,,Pending
+meeting_001,SPEAKER_02,Amit,10:04:12,I'll deploy the staging server today.,ACTION,Deploy the staging server,Amit,today,2026-10-05,,Pending
+meeting_001,SPEAKER_03,Priya,10:05:40,I will update the database schema within 3 days.,ACTION,Update the database schema,Priya,within 3 days,2026-10-08,,Pending
+meeting_001,SPEAKER_00,Manager,10:07:10,Manager: Rahul should complete the backend by Friday.,ACTION,Complete the backend,Rahul,by Friday,2026-10-09,,In Progress
+meeting_001,SPEAKER_00,Lead,10:08:22,Lead: Priya will design the database tables before Monday.,ACTION,Design the database tables,Priya,before Monday,2026-10-12,,Pending
+meeting_001,SPEAKER_02,Amit,10:10:05,"Sneha will prepare the dashboard UI tomorrow, as discussed in meeting item 124.",ACTION,Prepare the dashboard UI,Sneha,tomorrow,2026-10-06,,Pending
+meeting_001,SPEAKER_01,Sneha,10:11:30,"Arjun will create the presentation within three days, as discussed in meeting item 127.",ACTION,Create the presentation,Arjun,within three days,2026-10-08,,Pending
+meeting_001,SPEAKER_00,Rahul,10:13:00,Let's have Neha update the API documentation by Friday.,ACTION,Update the API documentation,Neha,by Friday,2026-10-09,,In Progress
+meeting_001,SPEAKER_03,Priya,10:14:15,We need Amit to review the test cases by Friday.,ACTION,Review the test cases,Amit,by Friday,2026-10-09,,In Progress
+meeting_001,SPEAKER_02,Amit,10:16:00,Please ask Riya to configure the development server before the final review.,ACTION,Configure the development server,Riya,before the final review,,,Pending
+meeting_001,SPEAKER_01,Sneha,10:17:45,Rahul needs to complete the data preprocessing before Monday.,ACTION,Complete the data preprocessing,Rahul,before Monday,2026-10-12,,Pending
+meeting_001,SPEAKER_00,Rahul,10:19:10,Amit is responsible for update the database schema today.,ACTION,Update the database schema,Amit,today,2026-10-05,,Pending
+meeting_001,SPEAKER_03,Priya,10:20:50,Karan said they will implement the notification system today.,ACTION,Implement the notification system,Karan,today,2026-10-05,,Pending
+meeting_001,SPEAKER_02,Amit,10:22:20,Neha agreed to update the API documentation by the end of the week.,ACTION,Update the API documentation,Neha,by the end of the week,2026-10-11,,In Progress
+meeting_001,SPEAKER_01,Sneha,10:24:00,Sneha should run the performance tests within three days.,ACTION,Run the performance tests,Sneha,within three days,2026-10-08,,In Progress
+meeting_001,SPEAKER_00,Rahul,10:25:30,"Vikram will deploy the application next week, as discussed in meeting item 246.",ACTION,Deploy the application,Vikram,next week,2026-10-12,,Pending
+meeting_001,SPEAKER_02,Amit,10:27:00,Meera has to configure the development server within three days.,ACTION,Configure the development server,Meera,within three days,2026-10-08,,Pending
+meeting_001,SPEAKER_03,Priya,10:28:40,"Rahul will finish the migration by October 15, 2026.",ACTION,Finish the migration,Rahul,"October 15, 2026",2026-10-15,,Pending
+meeting_001,SPEAKER_00,Rahul,10:30:15,Karan will submit the audit report by 2026-10-20.,ACTION,Submit the audit report,Karan,2026-10-20,2026-10-20,,Pending
+meeting_001,SPEAKER_01,Sneha,10:32:00,"Meera will complete the data preprocessing before the final review, as discussed in meeting item 13.",ACTION,Complete the data preprocessing,Meera,before the final review,,,Pending
+meeting_001,SPEAKER_02,Amit,10:33:45,"Priya will update the database schema before Monday, as discussed in meeting item 65.",ACTION,Update the database schema,Priya,before Monday,2026-10-12,,Pending
+meeting_001,SPEAKER_00,Rahul,10:35:10,Rahul completed the authentication module.,ACTION,The authentication module,Rahul,,,,Completed
+meeting_001,SPEAKER_03,Priya,10:36:50,Amit has to fix the payment bug but the task is blocked because the API is unavailable.,ACTION,Fix the payment bug but the task is blocked because the API is unavailable,Amit,,,,Blocked
+meeting_001,SPEAKER_01,Sneha,10:38:20,Arjun was assigned to build the legacy export but the feature was cancelled.,ACTION,Build the legacy export but the feature was cancelled,Arjun,,,,Cancelled
+meeting_001,SPEAKER_02,Amit,10:40:00,Karan is currently working on review the frontend code.,ACTION,The frontend code,Karan,,,,In Progress
+meeting_001,SPEAKER_00,Rahul,10:41:30,Riya will review the test cases today.,ACTION,Review the test cases,Riya,today,2026-10-05,,Pending
+meeting_001,SPEAKER_03,Priya,10:43:00,Amit will configure the development server by Wednesday.,ACTION,Configure the development server,Amit,by Wednesday,2026-10-07,,Pending
+meeting_001,SPEAKER_01,Sneha,10:44:20,Vikram agreed to fix the payment bug within three days.,ACTION,Fix the payment bug,Vikram,within three days,2026-10-08,,In Progress
+meeting_001,SPEAKER_02,Amit,10:46:00,Neha should implement the notification system before Monday.,ACTION,Implement the notification system,Neha,before Monday,2026-10-12,,In Progress
+meeting_001,SPEAKER_00,Rahul,10:47:15,Let's use Redis for caching.,DECISION,,,,,Use Redis for caching,Unknown
+meeting_001,SPEAKER_01,Sneha,10:48:30,We decided to use Next.js for the frontend.,DECISION,,,,,Use Next.js for the frontend,Unknown
+meeting_001,SPEAKER_02,Amit,10:50:00,We agreed that FastAPI should handle the backend.,DECISION,,,,,Use FastAPI for the backend,Unknown
+meeting_001,SPEAKER_03,Priya,10:51:20,The team agreed to deploy on AWS.,DECISION,,,,,Deploy on AWS,Unknown
+meeting_001,SPEAKER_00,Rahul,10:52:45,We will use MongoDB for the database.,DECISION,,,,,Use MongoDB for the database,Unknown
+meeting_001,SPEAKER_01,Sneha,10:54:10,The final decision is to use WebSocket for real-time communication.,DECISION,,,,,Use WebSocket for real-time communication,Unknown
+meeting_001,SPEAKER_02,Amit,10:55:30,We decided to use Python for the AI pipeline.,DECISION,,,,,Use Python for the AI pipeline,Unknown
+meeting_001,SPEAKER_03,Priya,10:57:00,Everyone agreed that Redis is the best choice for caching.,DECISION,,,,,Use Redis for caching,Unknown
+meeting_001,SPEAKER_00,Rahul,10:58:20,The team selected Docker for deployment.,DECISION,,,,,Use Docker for deployment,Unknown
+meeting_001,SPEAKER_01,Sneha,10:59:40,We have decided that PostgreSQL will be used for relational data storage.,DECISION,,,,,Use PostgreSQL for relational data storage,Unknown
+meeting_001,SPEAKER_02,Amit,11:01:00,We agreed that JWT should handle authentication.,DECISION,,,,,Use JWT for authentication,Unknown
+meeting_001,SPEAKER_03,Priya,11:02:15,The project will use FastAPI for the backend.,DECISION,,,,,Use FastAPI for the backend,Unknown
+meeting_001,SPEAKER_00,Rahul,11:03:30,The team agreed to use WebSocket for real-time communication.,DECISION,,,,,Use WebSocket for real-time communication,Unknown
+meeting_001,SPEAKER_01,Sneha,11:05:00,Let's use GitHub Actions for CI/CD.,DECISION,,,,,Use GitHub Actions for CI/CD,Unknown
+meeting_001,SPEAKER_02,Amit,11:06:20,We will use Diart for speaker diarization.,DECISION,,,,,Use Diart for speaker diarization,Unknown
+meeting_001,SPEAKER_03,Priya,11:07:45,We decided to use AWS for cloud deployment.,DECISION,,,,,Use AWS for cloud deployment,Unknown
+meeting_001,SPEAKER_00,Rahul,11:09:10,We agreed that Tailwind CSS should handle UI styling.,DECISION,,,,,Use Tailwind CSS for UI styling,Unknown
+meeting_001,SPEAKER_01,Sneha,11:10:30,We decided to use Whisper for speech recognition.,DECISION,,,,,Use Whisper for speech recognition,Unknown
+meeting_001,SPEAKER_02,Amit,11:11:50,Everyone agreed that Playwright is the best choice for end-to-end testing.,DECISION,,,,,Use Playwright for end-to-end testing,Unknown
+meeting_001,SPEAKER_03,Priya,11:13:15,The team selected Python for the AI pipeline.,DECISION,,,,,Use Python for the AI pipeline,Unknown
+meeting_001,SPEAKER_00,Rahul,11:14:40,The final decision is to use Diart for speaker diarization.,DECISION,,,,,Use Diart for speaker diarization,Unknown
+meeting_001,SPEAKER_01,Sneha,11:16:00,Let's use Python for the AI pipeline.,DECISION,,,,,Use Python for the AI pipeline,Unknown
+meeting_001,SPEAKER_02,Amit,11:17:25,We agreed that PostgreSQL should handle relational data storage.,DECISION,,,,,Use PostgreSQL for relational data storage,Unknown
+meeting_001,SPEAKER_03,Priya,11:18:50,The team agreed to use FastAPI for the backend.,DECISION,,,,,Use FastAPI for the backend,Unknown
+meeting_001,SPEAKER_00,Rahul,11:20:15,We agreed that Whisper should handle speech recognition.,DECISION,,,,,Use Whisper for speech recognition,Unknown
+meeting_001,SPEAKER_01,Sneha,11:21:40,The team selected Next.js for the frontend.,DECISION,,,,,Use Next.js for the frontend,Unknown
+meeting_001,SPEAKER_02,Amit,11:23:00,The team agreed to use Tailwind CSS for UI styling.,DECISION,,,,,Use Tailwind CSS for UI styling,Unknown
+meeting_001,SPEAKER_03,Priya,11:24:25,We agreed that WebSocket should handle real-time communication.,DECISION,,,,,Use WebSocket for real-time communication,Unknown
+meeting_001,SPEAKER_00,Rahul,11:25:50,The team selected Whisper for speech recognition.,DECISION,,,,,Use Whisper for speech recognition,Unknown
+meeting_001,SPEAKER_01,Sneha,11:27:10,We have decided that Diart will be used for speaker diarization.,DECISION,,,,,Use Diart for speaker diarization,Unknown
+meeting_001,SPEAKER_00,Rahul,11:28:30,The team discussed the API response time.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,11:30:00,We spent some time discussing the API response time.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,11:31:20,The team discussed the application security.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,11:32:45,The meeting focused on the project budget.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,11:34:10,There was a discussion about the authentication flow.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,11:35:30,The group examined the issues related to the database performance.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,11:37:00,The meeting covered the authentication flow.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,11:38:20,The group examined the issues related to the testing strategy.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,11:39:45,The group examined the issues related to the authentication flow.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,11:41:10,The team reviewed the current situation regarding the application security.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,11:42:35,The meeting focused on the system architecture.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,11:44:00,Everyone shared their thoughts about the project timeline.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,11:45:20,There was a discussion about the meeting schedule.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,11:46:40,The meeting covered the release plan.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,11:48:00,We spent some time discussing the system architecture.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,11:49:25,There was a discussion about the API response time.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,11:50:50,We spent some time discussing the current deployment issue.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,11:52:10,There was a discussion about the server configuration.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,11:53:30,The team reviewed the current situation regarding the project timeline.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,11:54:55,The team discussed the frontend design.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,11:56:15,The meeting focused on the project timeline.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,11:57:40,The meeting covered the system architecture.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,11:59:00,The meeting covered the data quality.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,12:00:25,There was a discussion about the project budget.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,12:01:45,We spent some time discussing the testing strategy.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,12:03:10,The participants raised concerns about the testing strategy.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,12:04:30,The group examined the issues related to the server configuration.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,12:05:55,The team reviewed the current situation regarding the testing strategy.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,12:07:20,The meeting focused on the database performance.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,12:08:45,The team reviewed the current situation regarding the database performance.,DISCUSSION,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,12:10:00,The team was informed that the API currently supports five endpoints.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,12:11:20,The current status is that the backend is written in Python.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,12:12:40,We know that the meeting starts at ten o'clock.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,12:14:00,The team was informed that the next review is scheduled for Friday.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,12:15:25,The current status is that the next review is scheduled for Friday.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,12:16:50,The current setup is that the system has two user roles.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,12:18:10,It was reported that the meeting starts at ten o'clock.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,12:19:35,The current setup is that the application has three main modules.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,12:21:00,The current setup is that the next review is scheduled for Friday.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,12:22:20,"For reference, the current version is 2.1.",INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,12:23:45,The team was informed that the meeting starts at ten o'clock.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,12:25:10,The team noted that the project deadline is next month.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,12:26:35,We know that the system has two user roles.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,12:28:00,"For reference, the application supports mobile devices.",INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,12:29:20,The team noted that the next review is scheduled for Friday.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,12:30:45,The team was informed that the system has two user roles.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,12:32:10,The current status is that the project deadline is next month.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,12:33:30,The meeting confirmed that the testing environment is ready.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,12:34:55,The current status is that the frontend is built with React.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,12:36:20,"For reference, the API currently supports five endpoints.",INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,12:37:45,We know that the project currently has four developers.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,12:39:10,The team noted that the project currently has four developers.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,12:40:35,The team noted that the testing environment is ready.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,12:42:00,The current setup is that the project deadline is next month.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,12:43:25,The current status is that the team completed the first development phase.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,12:44:50,The team noted that the current version is 2.1.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,12:46:15,The team was informed that the backend is written in Python.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,12:47:40,The current setup is that the frontend is built with React.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,12:49:00,"For reference, the team completed the first development phase.",INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,12:50:20,The current setup is that the database contains customer records.,INFORMATION,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,12:51:40,Can everyone hear me?,UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,12:52:10,"Yes, loud and clear.",UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,12:52:40,The interface looks much better now.,UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,12:53:15,The meeting started late today.,UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,12:53:50,Am I audible to everyone in the room?,UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,12:54:20,Good morning everyone.,UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,12:54:50,Can you see my screen?,UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,12:55:15,"Yes, your screen is visible.",UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,12:55:45,Quick mic check before we dive in.,UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,12:56:10,"Sorry I'm late, had network connectivity issues.",UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,12:56:40,"No worries Sneha, we just got started.",UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,12:57:10,The weather is really rainy outside today.,UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,12:57:40,"Haha yes, perfect coffee weather.",UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,12:58:15,"Alright, let's keep this session brief.",UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,12:58:45,"Agreed, lots of items to cover.",UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,12:59:15,Could someone send the link in the chat?,UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,12:59:45,Sent the doc link just now.,UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,13:00:15,Thanks Rahul!,UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,13:00:45,I think someone has their background mic echoing.,UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,13:01:15,"Muted now, sorry about that.",UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,13:01:45,Looks like everyone is on the same page.,UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,13:02:15,"Great, sounds good to me.",UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,13:02:45,Does anyone have other questions?,UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,13:03:15,"Nope, all good from my side.",UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,13:03:45,"Same here, very clear.",UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,13:04:15,"Awesome, thanks everyone for joining.",UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_02,Amit,13:04:45,"Thank you all, talk to you later.",UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_03,Priya,13:05:15,"Bye everyone, have a nice day.",UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_00,Rahul,13:05:45,See you tomorrow guys.,UNKNOWN,,,,,,Unknown
+meeting_001,SPEAKER_01,Sneha,13:06:15,"Take care everyone, bye.",UNKNOWN,,,,,,Unknown

@@ -1,0 +1,51 @@
+[
+  {
+    "meeting_id": "meeting_001",
+    "speaker_id": "SPEAKER_00",
+    "speaker": "Rahul",
+    "timestamp": "10:15:23",
+    "text": "I'll complete the backend by Friday."
+  },
+  {
+    "meeting_id": "meeting_001",
+    "speaker_id": "SPEAKER_01",
+    "speaker": "Amit",
+    "timestamp": "10:17:12",
+    "text": "Let's use MongoDB for the database."
+  },
+  {
+    "meeting_id": "meeting_001",
+    "speaker_id": "SPEAKER_02",
+    "speaker": "Sneha",
+    "timestamp": "10:18:40",
+    "text": "Sneha will prepare the dashboard UI tomorrow."
+  },
+  {
+    "meeting_id": "meeting_001",
+    "speaker_id": "SPEAKER_00",
+    "speaker": "Manager",
+    "timestamp": "10:20:05",
+    "text": "Manager: Rahul should complete the backend by Friday."
+  },
+  {
+    "meeting_id": "meeting_001",
+    "speaker_id": "SPEAKER_03",
+    "speaker": "Priya",
+    "timestamp": "10:21:30",
+    "text": "The team discussed the API response time."
+  },
+  {
+    "meeting_id": "meeting_001",
+    "speaker_id": "SPEAKER_01",
+    "speaker": "Amit",
+    "timestamp": "10:22:50",
+    "text": "For reference, the current version is 2.1."
+  },
+  {
+    "meeting_id": "meeting_001",
+    "speaker_id": "SPEAKER_02",
+    "speaker": "Sneha",
+    "timestamp": "10:24:10",
+    "text": "Can everyone hear me?"
+  }
+]

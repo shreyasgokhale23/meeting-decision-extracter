@@ -1,0 +1,3 @@
+type,responsible_person,deadline_text,deadline_normalized,decision,status,meeting_id,speaker_id,speaker,timestamp,text
+ACTION,John Doe,by tomorrow,,,meeting1,,John Doe,,[00:00:01],"Please submit the report by tomorrow."
+DECISION,,,,Approve budget,meeting1,,,,[00:00:05],"The budget is approved."

@@ -1,0 +1,16 @@
+[10:00:00] Rahul: Good morning team, can everyone hear me?
+[10:00:15] Sneha: Yes Rahul, loud and clear.
+[10:00:30] Rahul: Great. We know that the meeting starts at ten o'clock, so let's get right into sprint updates.
+[10:01:00] Amit: The team discussed the API response time earlier today.
+[10:01:45] Priya: For reference, the current version is 2.1 and the backend is written in Python.
+[10:02:15] Sneha: We decided to use MongoDB for the database.
+[10:02:40] Rahul: Let's use Redis for caching.
+[10:03:00] Amit: I agree. Everyone agreed that Redis is the best choice for caching.
+[10:03:30] Priya: I'll update the database schema by Friday.
+[10:04:00] Rahul: Sneha will prepare the dashboard UI tomorrow.
+[10:04:30] Sneha: Sounds good. We need Amit to review the test cases by Friday.
+[10:05:00] Manager: Rahul should complete the backend by Friday.
+[10:05:30] Rahul: Got it. Arjun will create the presentation within three days.
+[10:06:00] Sneha: Please ask Riya to configure the development server before the final review.
+[10:06:30] Amit: The final decision is to use WebSocket for real-time communication.
+[10:07:00] Rahul: Awesome. Thanks everyone for joining.
